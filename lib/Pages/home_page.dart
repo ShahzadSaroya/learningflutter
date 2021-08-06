@@ -10,8 +10,11 @@ class HomePage extends StatelessWidget {
     var wf = 3.45;
     return Scaffold(
       appBar: AppBar(
-        title: Text("My App"),
-      ),
+          title: Center(
+        child: Text("My App"),
+      )
+          //title: Text("My App"),
+          ),
       body: Center(
         child: Material(
           child: Center(
