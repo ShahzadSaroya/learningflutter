@@ -11,20 +11,35 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String name = "";
   bool changeButton = false;
+  final _formKey = GlobalKey<FormState>();
+
+  moveToHome(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        changeButton = true;
+      });
+      await Future.delayed(Duration(seconds: 1));
+      await Navigator.pushNamed(context, MyRoutes.homeRoute);
+      setState(() {
+        changeButton = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Material(
-          color: Colors.white,
-          child: SingleChildScrollView(
+    return Material(
+        color: Colors.white,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
             child: Column(children: [
               Image.asset(
-                "assets/images/login_image.png",
+                "assets/images/hey.png",
                 fit: BoxFit.cover,
               ),
               SizedBox(
-                height: 20,
+                height: 30,
               ),
               Text(
                 "Welcome $name",
@@ -46,6 +61,13 @@ class _LoginPageState extends State<LoginPage> {
                         hintText: "Enter User Name",
                         labelText: "User Name",
                       ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Username cannot be empty";
+                        }
+
+                        return null;
+                      },
                       onChanged: (value) {
                         name = value;
                         setState(() {});
@@ -57,40 +79,44 @@ class _LoginPageState extends State<LoginPage> {
                         hintText: "Enter Password",
                         labelText: "Password",
                       ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Password cannot be empty";
+                        } else if (value.length < 6) {
+                          return "Password should be more than 6 characters";
+                        }
+
+                        return null;
+                      },
                     ),
                     SizedBox(
                       height: 40,
                     ),
-                    InkWell(
-                      onTap: () async {
-                        Navigator.pushNamed(context, MyRoutes.homeRoute);
-                        setState(() {
-                          changeButton = true;
-                        });
-                        await Future.delayed(Duration(seconds: 1));
-                      },
-                      child: AnimatedContainer(
-                        duration: Duration(seconds: 1),
-                        height: 40,
-                        width: changeButton ? 50 : 150,
-                        alignment: Alignment.center,
-                        child: changeButton
-                            ? Icon(
-                                Icons.done,
-                                color: Colors.white,
-                              )
-                            : Text(
-                                "Login",
-                                style: TextStyle(
+                    Material(
+                      color: Colors.green.shade400,
+                      borderRadius:
+                          BorderRadius.circular(changeButton ? 50 : 8),
+                      child: InkWell(
+                        onTap: () => moveToHome(context),
+                        child: AnimatedContainer(
+                          duration: Duration(seconds: 1),
+                          height: 40,
+                          width: changeButton ? 50 : 150,
+                          alignment: Alignment.center,
+                          child: changeButton
+                              ? Icon(
+                                  Icons.done,
                                   color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 17,
+                                )
+                              : Text(
+                                  "Login",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                  ),
                                 ),
-                              ),
-                        decoration: BoxDecoration(
-                            color: Colors.green.shade400,
-                            borderRadius:
-                                BorderRadius.circular(changeButton ? 50 : 8)),
+                        ),
                       ),
                     )
 
@@ -105,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               )
             ]),
-          )),
-    );
+          ),
+        ));
   }
 }
